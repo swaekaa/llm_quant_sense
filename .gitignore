@@ -1,0 +1,38 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# ---- Virtual Environments ----
+venv/
+.env/
+.venv/
+
+# ---- IDE ----
+.vscode/
+.idea/
+*.iml
+
+# ---- OS ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs & Caches ----
+*.log
+.cache/
+
+# ---- Datasets ----
+data/
+
+# ---- Model Weights ----
+*.pt
+*.bin
+*.ckpt
+*.safetensors
+
+# ---- Experiments ----
+runs/
+outputs/
+checkpoints/
