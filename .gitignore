@@ -36,3 +36,11 @@ data/
 runs/
 outputs/
 checkpoints/
+
+# HuggingFace cache
+hf_cache/
+
+
+
+# Model cache
+.cache/
