@@ -18,5 +18,23 @@ fast inference
 
 
 
+FP32 Model → Baseline Accuracy
+        ↓
+For each transformer layer:
+        ↓
+    Quantize layer → Evaluate → Accuracy Drop
+        ↓
+Layer Sensitivity Ranking
 
+
+run from here: python -m experiments.layer_sensitivity
+
+
+Sensitivity results of six layers as of yet 
+Layer 0: 0.23% drop
+Layer 1: 0.23% drop
+Layer 2: 0.34% drop
+Layer 3: 0.34% drop
+Layer 4: 0.34% drop
+Layer 5: 0.00% drop
 
