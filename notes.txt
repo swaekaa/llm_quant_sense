@@ -1,0 +1,22 @@
+
+to activate venv:
+venv\Scripts\activate
+
+
+
+
+model we will be using is : distilbert-base-uncased-finetuned-sst-2-english
+which is around 66M parametrs 
+6 transformer layer
+
+as confined to limted compute can use a better model later on 
+
+
+dataset : SST 2
+glue banchmark
+fast inference 
+
+
+
+
+
