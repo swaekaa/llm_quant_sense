@@ -22,13 +22,14 @@ def main():
 
     # Your sensitivity-driven mixed precision policy
     layer_bit_map = {
-        0: 6,
-        1: 6,
-        2: 8,
-        3: 8,
-        4: 8,
-        5: 4
-    }
+    0: 8,
+    1: 8,
+    2: 8,
+    3: 8,
+    4: 8,
+    5: 4
+}
+
 
     mixed_model = apply_mixed_precision(model, layer_bit_map)
     mixed_model.to(DEVICE)
