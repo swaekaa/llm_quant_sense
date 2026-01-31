@@ -1,66 +1,91 @@
-## Model Details
+# 📌 Quantization Sensitivity Analysis for LLMs
 
-The model used in this experiment is:
+This project studies **layer-wise quantization sensitivity** in Large Language Models (LLMs) and evaluates **mixed-precision quantization strategies** to reduce model precision while preserving accuracy.
 
-**distilbert-base-uncased-finetuned-sst-2-english**
-
-- Number of parameters: **~66M**
-- Transformer layers: **6**
-- Reason for model choice: Due to limited computational resources, a smaller and faster model is used initially. A more powerful model can be explored later.
+The goal is to understand which transformer layers are most sensitive to quantization, and how this knowledge can be used to design efficient, deployment-friendly models.
 
 ---
 
-## Dataset
+## 🧠 Motivation
 
-**SST-2 (Stanford Sentiment Treebank)** from the **GLUE benchmark**
+Quantization is widely used to:
 
-- Task: Binary sentiment classification
-- Focus: Fast inference and efficient evaluation
+- Reduce model size  
+- Improve inference speed  
+- Lower deployment cost  
+
+However, **uniform quantization across all layers** often leads to unnecessary accuracy loss.
+
+This project answers:
+
+- Are all transformer layers equally sensitive to quantization?  
+- Can we quantize some layers more aggressively than others?
 
 ---
 
-## Objective
+## 🏗️ Model & Dataset
 
-The objective of this experiment is to analyze **layer-wise sensitivity to quantization** in order to determine which transformer layers are most robust and which are most sensitive.
+- **Model:** `distilbert-base-uncased-finetuned-sst-2-english`
+- **Architecture:** 6-layer Transformer (DistilBERT)
+- **Task:** Sentiment Classification
+- **Dataset:** SST-2 (GLUE benchmark)
+- **Evaluation Metric:** Accuracy
 
 ---
 
-## Methodology
+## ⚙️ Project Structure
 
-### Pipeline
+```text
+llm-quant-sensitivity/
+│
+├── models/                 # Model loading
+├── data_utils/             # Dataset loading
+├── evaluation/             # Accuracy evaluation
+│
+├── quantization/
+│   ├── layerwise.py        # Fake quantization utilities
+│   └── mixed_precision.py # Mixed-precision quantization
+│
+├── sensitivity/
+│   ├── metrics.py          # Sensitivity metric
+│   └── ranking.py          # Layer ranking utility
+│
+├── visualization/
+│   └── plots.py            # Sensitivity plots
+│
+├── experiments/
+│   ├── baseline_eval.py
+│   ├── layer_sensitivity.py
+│   ├── mixed_precision_eval.py
+│   └── ablation_study.py
+│
+├── requirements.txt
+└── README.md
 ```
-FP32 Model → Baseline Accuracy
-        ↓
-For each transformer layer:
-        ↓
-    Quantize layer → Evaluate → Measure Accuracy Drop
-        ↓
-Layer Sensitivity Ranking
-```
 
+## 🚀 Experimental Pipeline
 
-### Explanation
+### Phase 1 — FP32 Baseline
 
-1. Start with the FP32 (full precision) model and record baseline accuracy.
-2. For each transformer layer:
-   - Quantize the layer.
-   - Evaluate the model.
-   - Measure the resulting accuracy drop.
-3. Rank the layers based on how sensitive they are to quantization.
+- Evaluate the full-precision (FP32) model  
+- Establish a reference accuracy  
+
+**Result:**
+
+- **FP32 Accuracy:** **91.06%**
 
 ---
 
-## How to Run
+### Phase 2 — Layer-wise Quantization Sensitivity
 
-```bash
-python -m experiments.layer_sensitivity
-```
-## Results
+Each transformer layer is quantized individually (others kept FP32), and the resulting accuracy drop is measured.
 
-### Layer Sensitivity Results (6 Transformer Layers)
+This isolates how sensitive each layer is to quantization noise.
 
-| Layer  | Accuracy Drop |
-|---------|----------------|
+#### Results
+
+| Layer | Accuracy Drop |
+|------|----------------|
 | Layer 0 | 0.23% |
 | Layer 1 | 0.23% |
 | Layer 2 | 0.34% |
@@ -68,13 +93,108 @@ python -m experiments.layer_sensitivity
 | Layer 4 | 0.34% |
 | Layer 5 | 0.00% |
 
+#### Key Observations
+
+- Middle layers (**2–4**) are the most sensitive  
+- Final layer (**5**) is highly robust to quantization  
+
 ---
 
-## Observations
+### Phase 3 — Mixed-Precision Quantization
 
-- **Layer 5** is the least sensitive to quantization, showing **no accuracy degradation**.
-- **Layers 2, 3, and 4** are the most sensitive, each exhibiting the highest accuracy drop.
-- Early layers (0 and 1) show moderate sensitivity.
-- These results can guide **mixed-precision or selective quantization strategies** for optimal performance and accuracy trade-offs.
+Using sensitivity results, mixed-precision strategies were evaluated where different layers use different bit-widths.
 
+#### Example strategies tested:
+
+- Aggressive mixed precision (**INT6 + INT4**)  
+- Uniform **INT8** with selective **INT4**  
+- Targeted single-layer quantization  
+
+---
+
+### Ablation Study (Key Validation)
+
+Only the least sensitive layer (**Layer 5**) was quantized to **INT4**, all others kept FP32.
+
+**Result:**
+
+- **Accuracy:** **90.94%**  
+- **Accuracy Drop:** **0.12%**
+
+This confirms that **late transformer layers can be aggressively quantized with negligible impact**.
+
+---
+
+## 📊 Visualization
+
+Layer-wise sensitivity can be visualized using a simple bar plot:
+
+**Layer-wise Quantization Sensitivity**
+
+This plot highlights:
+
+- Peak sensitivity in middle layers  
+- Near-zero sensitivity in the final layer  
+
+---
+
+## 🧠 Key Findings
+
+- Transformer layers are **not equally sensitive** to quantization  
+- Layer-wise sensitivity analysis is necessary but not sufficient  
+- Quantization error compounds **non-linearly** when multiple layers are quantized  
+- Aggressive quantization is safe for selected layers  
+- Uniform quantization is often suboptimal compared to targeted strategies  
+
+---
+
+## 💡 Takeaway
+
+Effective LLM quantization requires **sensitivity-aware, layer-specific precision choices** rather than uniform compression.
+
+---
+
+## 🖥️ Hardware & Runtime
+
+- Runs on CPU with automatic CUDA fallback  
+- No retraining required  
+- Fake quantization used for fast, hardware-agnostic analysis  
+
+---
+
+## 📦 Installation
+
+```bash
+pip install -r requirements.txt
+```
+
+## ▶️ Running Experiments
+
+```bash
+# FP32 baseline
+python -m experiments.baseline_eval
+
+# Layer-wise sensitivity
+python -m experiments.layer_sensitivity
+
+# Mixed-precision evaluation
+python -m experiments.mixed_precision_eval
+
+# Ablation study
+python -m experiments.ablation_study
+```
+
+## 🏁 Conclusion
+
+This project demonstrates a complete **quantization sensitivity analysis pipeline for LLMs**, combining:
+
+- Rigorous experimentation  
+- Clear empirical insights  
+- Practical deployment relevance  
+
+It is suitable as:
+
+- A research prototype  
+- A portfolio project  
+- A foundation for further work on LLM compression
 
