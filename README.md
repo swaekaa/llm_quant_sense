@@ -100,15 +100,37 @@ This isolates how sensitive each layer is to quantization noise.
 
 ---
 
-### Phase 3 — Mixed-Precision Quantization
+## Phase 3 — Mixed-Precision Quantization
 
-Using sensitivity results, mixed-precision strategies were evaluated where different layers use different bit-widths.
+Based on the layer-wise sensitivity results, we designed a **sensitivity-aware mixed-precision policy**, assigning lower precision to robust layers and higher precision to sensitive ones.
 
-#### Example strategies tested:
+### Mixed-precision configuration used:
 
-- Aggressive mixed precision (**INT6 + INT4**)  
-- Uniform **INT8** with selective **INT4**  
-- Targeted single-layer quantization  
+```python
+layer_bit_map = {
+    0: 6,
+    1: 6,
+    2: 8,
+    3: 8,
+    4: 8,
+    5: 4
+}n
+```
+Interpretation of this policy:
+
+Layers 2–4 (most sensitive) → INT8
+
+Layers 0–1 (moderately sensitive) → INT6
+
+Layer 5 (most robust) → INT4
+
+Result:
+Mixed Precision Accuracy: 90.37%
+Accuracy Drop: 0.69%
+
+Key insight:
+
+This shows that a targeted mixed-precision strategy can compress the model while keeping accuracy within ~1% of the FP32 baseline, outperforming uniform aggressive quantization.
 
 ---
 
@@ -197,4 +219,5 @@ It is suitable as:
 - A research prototype  
 - A portfolio project  
 - A foundation for further work on LLM compression
+
 
