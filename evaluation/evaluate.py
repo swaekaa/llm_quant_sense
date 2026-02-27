@@ -1,30 +1,20 @@
 import torch
-from tqdm import tqdm
+import math
 
 
-@torch.no_grad()
-def evaluate(model, dataloader, device="cpu"):
-    """
-    Evaluates classification accuracy.
-    """
-    model.eval()
+def compute_perplexity(model, tokenizer, text, max_length=512):
 
-    correct = 0
-    total = 0
+    encodings = tokenizer(
+        text,
+        return_tensors="pt",
+        truncation=True,
+        max_length=max_length
+    )
 
-    for batch in tqdm(dataloader, desc="Evaluating"):
-        input_ids = batch["input_ids"].to(device)
-        attention_mask = batch["attention_mask"].to(device)
-        labels = batch["label"].to(device)
+    input_ids = encodings.input_ids.to(model.device)
 
-        outputs = model(
-            input_ids=input_ids,
-            attention_mask=attention_mask
-        )
+    with torch.no_grad():
+        outputs = model(input_ids, labels=input_ids)
+        loss = outputs.loss
 
-        preds = torch.argmax(outputs.logits, dim=-1)
-
-        correct += (preds == labels).sum().item()
-        total += labels.size(0)
-
-    return correct / total
+    return math.exp(loss.item())

@@ -38,3 +38,115 @@ Layer 3: 0.34% drop
 Layer 4: 0.34% drop
 Layer 5: 0.00% drop
 
+
+
+work done till now:
+ We switched from Mistral 7B to Phi-2 because Mistral was too heavy and unstable on a 12GB RTX 3060 (Windows),
+ while Phi-2 is smaller, stable, and still deep enough (32 layers) for proper sensitivity analysis. 
+ We evaluated the model using perplexity on WikiText-2 since it measures how well the model predicts the next word (lower is better). 
+ Sensitivity is measured by checking how much perplexity increases when a layer is modified compared to baseline. 
+ Masking an entire layer caused perplexity to explode because each transformer block is essential for maintaining information flow through residual connections. 
+ We couldn’t inject noise directly since the model was loaded in 4-bit, meaning weights are stored in quantized format (not normal float tensors). 
+ Each transformer layer mainly consists of self-attention and an MLP block. 
+ Gaussian noise is a better simulation of quantization than zeroing because quantization introduces small perturbations, not complete removal. 
+ Highly sensitive layers should be kept in higher precision in mixed precision setups. Next step is to test attention vs MLP sensitivity or try precision swapping per layer. 
+ High perplexity indicates poor prediction quality and higher uncertainty.
+
+
+Baseline PPL: 6.745146786722399
+
+Testing Layer 0
+Layer 0 PPL: 13608.5377 | Sensitivity: 13601.7925
+
+Testing Layer 1
+Layer 1 PPL: 6391.7417 | Sensitivity: 6384.9965
+
+Testing Layer 2
+Layer 2 PPL: 23405.1393 | Sensitivity: 23398.3942
+
+Testing Layer 3
+Layer 3 PPL: 19012.4262 | Sensitivity: 19005.6810
+
+Testing Layer 4
+Layer 4 PPL: 13916.9135 | Sensitivity: 13910.1683
+
+Testing Layer 5
+Layer 5 PPL: 26102.0540 | Sensitivity: 26095.3088
+
+Testing Layer 6
+Layer 6 PPL: 22189.5274 | Sensitivity: 22182.7822
+
+Testing Layer 7
+Layer 7 PPL: 21969.4033 | Sensitivity: 21962.6582
+
+Testing Layer 8
+Layer 8 PPL: 23654.8488 | Sensitivity: 23648.1036
+
+Testing Layer 9
+Layer 9 PPL: 12077.6710 | Sensitivity: 12070.9259
+
+Testing Layer 10
+Layer 10 PPL: 23406.9474 | Sensitivity: 23400.2023
+
+Testing Layer 11
+Layer 11 PPL: 21533.8772 | Sensitivity: 21527.1321
+
+Testing Layer 12
+Layer 12 PPL: 25986.8311 | Sensitivity: 25980.0859
+
+Testing Layer 13
+Layer 13 PPL: 10826.5402 | Sensitivity: 10819.7950
+
+Testing Layer 14
+Layer 14 PPL: 29292.3278 | Sensitivity: 29285.5826
+
+Testing Layer 15
+Layer 15 PPL: 15200.8919 | Sensitivity: 15194.1468
+
+Testing Layer 16
+Layer 16 PPL: 36186.6540 | Sensitivity: 36179.9089
+
+Testing Layer 17
+Layer 17 PPL: 22742.0515 | Sensitivity: 22735.3063
+
+Testing Layer 18
+Layer 18 PPL: 25587.5051 | Sensitivity: 25580.7599
+
+Testing Layer 19
+Layer 19 PPL: 35070.8995 | Sensitivity: 35064.1543
+
+Testing Layer 20
+Layer 20 PPL: 140753.7017 | Sensitivity: 140746.9566
+
+Testing Layer 21
+Layer 21 PPL: 25867.6019 | Sensitivity: 25860.8568
+
+Testing Layer 22
+Layer 22 PPL: 17731.9605 | Sensitivity: 17725.2154
+
+Testing Layer 23
+Layer 23 PPL: 3579127.3713 | Sensitivity: 3579120.6262
+
+Testing Layer 24
+Layer 24 PPL: 28609.8425 | Sensitivity: 28603.0973
+
+Testing Layer 25
+Layer 25 PPL: 20797.2179 | Sensitivity: 20790.4727
+
+Testing Layer 26
+Layer 26 PPL: 18958.6875 | Sensitivity: 18951.9423
+
+Testing Layer 27
+Layer 27 PPL: 50642.8285 | Sensitivity: 50636.0833
+
+Testing Layer 28
+Layer 28 PPL: 6788.1464 | Sensitivity: 6781.4013
+
+Testing Layer 29
+Layer 29 PPL: 16803.0030 | Sensitivity: 16796.2578
+
+Testing Layer 30
+Layer 30 PPL: 5793.6589 | Sensitivity: 5786.9138
+
+Testing Layer 31
+Layer 31 PPL: 16535.3357 | Sensitivity: 16528.5906
