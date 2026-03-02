@@ -180,3 +180,33 @@ Early feature expansion (Layer 0 MLP) is foundational.
 Middle layers are distributed and robust.
 Late layers refine output probabilities.
 Catastrophic behavior happens only when full layer removed, not component-level.
+
+
+PHAZE 3
+
+Highly Sensitive (Top Risk Group)
+Layer 31 → 0.88
+Layer 27 → 0.82
+Layer 26 → 0.79
+Layer 5 → 0.71
+Layer 12 → 0.71
+Layer 4 → 0.68
+These are strong candidates to keep higher precision.
+
+Medium Sensitivity (0.3–0.6)
+Layer 6 → 0.58
+Layer 11 → 0.51
+Layer 13 → 0.54
+Layer 25 → 0.59
+Layer 16 → 0.38
+Layer 22 → 0.36
+These could tolerate 8-bit.
+
+Low Sensitivity (< 0.25)
+Layer 10 → 0.09
+Layer 9 → 0.11
+Layer 17 → 0.16
+Layer 20 → 0.18
+Layer 24 → 0.17
+Layer 2 → 0.22
+These are ideal 4-bit candidates.
