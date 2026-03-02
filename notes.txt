@@ -53,6 +53,9 @@ work done till now:
  High perplexity indicates poor prediction quality and higher uncertainty.
 
 
+
+PHASE 1
+
 Baseline PPL: 6.745146786722399
 
 Testing Layer 0
@@ -150,3 +153,30 @@ Layer 30 PPL: 5793.6589 | Sensitivity: 5786.9138
 
 Testing Layer 31
 Layer 31 PPL: 16535.3357 | Sensitivity: 16528.5906
+
+
+PHASE 2 
+
+Layer 0 MLP is Extremely Critical
+Attention PPL: 8.77
+MLP PPL: 1586.47
+Early MLP is extremely important
+Removing it collapses representations immediately
+Attention in Layer 0 is less catastrophic than MLP
+
+
+Middle Layers Are Surprisingly Stable
+Layers 1–26 mostly:
+Attention PPL ≈ 6.7–7.3
+MLP PPL ≈ 6.8–7.4
+Masking either component only slightly increases perplexity
+Redundancy exists
+Model distributes computation across layers
+
+Later Layers Slightly More Sensitive (Attention)
+Layer 27 Attention: 7.34
+Layer 31 MLP: 7.89
+Early feature expansion (Layer 0 MLP) is foundational.
+Middle layers are distributed and robust.
+Late layers refine output probabilities.
+Catastrophic behavior happens only when full layer removed, not component-level.
