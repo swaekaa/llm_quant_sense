@@ -210,3 +210,28 @@ Layer 20 → 0.18
 Layer 24 → 0.17
 Layer 2 → 0.22
 These are ideal 4-bit candidates.
+
+Sensitivity is not monotonic
+Both early and late layers can be critical
+Some middle layers are very robust
+Final layer (31) is highly precision-sensitive
+
+PHAZE 4 
+
+done for phi 1.5
+4gb graphics card caould not handle it 
+
+| Precision | PPL     | Δ vs FP16 | Tokens/sec | Peak GPU MB |
+| --------- | ------- | --------- | ---------- | ----------- |
+| FP16      | 12.5600 | 0.0000    | 3282       | 3061        |
+| 8-bit     | 12.6008 | +0.0409   | 1307       | 2522        |
+| 4-bit NF4 | 12.7195 | +0.1595   | 2471       | 2581        |
+| 4-bit FP4 | 13.2768 | +0.7169   | 2441       | 3160        |
+
+
+insights:
+8-bit quantization is almost lossless
+NF4 preserves model distribution significantly better than FP4
+Quantization does not guarantee speedup on small GPUs
+Peak memory depends on kernel implementation, not just bit width
+FP16 can outperform quantized models in throughput on consumer GPUs
